@@ -1,7 +1,7 @@
 /*!
  * angular-directive-boilerplate
  * 
- * Version: 0.0.8 - 2016-06-16T06:02:51.936Z
+ * Version: 0.0.8 - 2016-06-16T07:37:51.774Z
  * License: MIT
  */
 
@@ -167,7 +167,7 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
           var canvas = $document[0].createElement('canvas');
           var ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0);
-          var imgData = ctx.getImageData(0, 0, img.width, img.height);
+          var imgData = ctx.getImageData(0, 0, options.imageWidth, options.imageHeight);
           d.resolve(imgData);
       };
 

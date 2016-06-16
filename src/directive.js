@@ -159,7 +159,7 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
           var canvas = $document[0].createElement('canvas');
           var ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0);
-          var imgData = ctx.getImageData(0, 0, img.width, img.height);
+          var imgData = ctx.getImageData(0, 0, options.imageWidth, options.imageHeight);
           d.resolve(imgData);
       };
 
