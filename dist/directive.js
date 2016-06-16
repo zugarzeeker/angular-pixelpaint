@@ -1,7 +1,7 @@
 /*!
  * angular-directive-boilerplate
  * 
- * Version: 0.0.8 - 2016-06-16T05:33:30.531Z
+ * Version: 0.0.8 - 2016-06-16T05:54:39.559Z
  * License: MIT
  */
 
@@ -9,14 +9,14 @@
 /* globals Hammer, Image */
 'use strict';
 
-angular.module('angular.pixelpaint', []).directive('pixelPaint', ['$document', '$window', '$q', '$timeout', '$log', function ($document, $window, $q, $timeout, $log) {
+angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$window', '$q', '$timeout', '$log', function ($document, $window, $q, $timeout, $log) {
   //var value = 0;
 
   var directive = {
     restrict: 'E',
     scope: {
       'layers': '=',
-      'options': '=',
+      'paintOptions': '=',
       'shouldGenerateOutputImage': '=',
       'outputImage': '=',
       'revision': '='
@@ -25,14 +25,13 @@ angular.module('angular.pixelpaint', []).directive('pixelPaint', ['$document', '
     link: linkFunc
   };
 
-  function linkFunc(scope, el, attr) {
-
+  function linkFunc(scope, el) {
     var optionsWatcher, layersWatcher, outputImageFlagWatcher, revisionWatcher;
 
     var defaultCanvas = $document[0].createElement('canvas');
     var defaultContext = defaultCanvas.getContext('2d');
     el.addClass('pixelpaint');
-    var layersContainer = angular.element(el[0].querySelector('.layers-container'))
+    var layersContainer = el.find('.layers-container');
 
     /** 
      * Instance Variables
@@ -53,8 +52,8 @@ angular.module('angular.pixelpaint', []).directive('pixelPaint', ['$document', '
         panStartLayerOffset = {x:0, y:0},
         revisions = [];
 
-    optionsWatcher = scope.$watch('options', function(newValue, oldValue) {
-      options = Object.assign(options, scope.options);
+    optionsWatcher = scope.$watch('paintOptions', function(newValue, oldValue) {
+      options = Object.assign(options, scope.paintOptions);
 
       // If cell size did changed
       if(newValue.cellSize !== oldValue.cellSize){

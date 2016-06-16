@@ -1,7 +1,7 @@
 /* globals Hammer, Image */
 'use strict';
 
-angular.module('angular.pixelpaint', []).directive('pixelPaint', ['$document', '$window', '$q', '$timeout', '$log', function ($document, $window, $q, $timeout, $log) {
+angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$window', '$q', '$timeout', '$log', function ($document, $window, $q, $timeout, $log) {
   //var value = 0;
 
   var directive = {

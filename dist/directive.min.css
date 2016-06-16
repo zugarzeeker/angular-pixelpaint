@@ -1,6 +1,6 @@
 /*!
  * angular-directive-boilerplate
  * 
- * Version: 0.0.8 - 2016-06-16T05:33:30.526Z
+ * Version: 0.0.8 - 2016-06-16T05:54:39.523Z
  * License: MIT
  */.pixelpaint{background-color:#ccc;position:relative;border:1px solid gray;display:block;overflow:hidden;cursor:crosshair}.pixelpaint canvas{position:absolute;left:0;top:0}.pixelpaint canvas.text.active{border:1px solid #00f}

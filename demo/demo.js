@@ -1,4 +1,4 @@
-var app = angular.module('demo', ['ngSanitize', 'angular.pixelpaint']);
+var app = angular.module('demo', ['ngSanitize', 'angularPixelPaint']);
 
 app.controller('DemoController', ['$scope', '$log', function($scope, $log) {
 
