@@ -136,6 +136,10 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
                                             (layer.offset.x * options.cellSize) + 'px,' +
                                             (layer.offset.y * options.cellSize) + 'px)';
 
+      if(layer.active){
+        layer.element.addClass('active');
+      }
+
       layer.imageData = defaultContext.createImageData(options.imageWidth, options.imageHeight); 
       
       if(angular.isDefined(index)){ 
@@ -210,11 +214,19 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
         if(i === index) {
           layer.active = true;
           layer.element.addClass('active');
+
+          if(i < scope.layers.length) scope.layers[i].active = true;
         }
         else {
           layer.active = false;
           layer.element.removeClass('active');
+
+          if(i < scope.layers.length) scope.layers[i].active = false;
         }
+      });
+      
+      $timeout(function() {
+        scope.$digest();
       });
     };
 
