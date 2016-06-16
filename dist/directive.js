@@ -1,7 +1,7 @@
 /*!
  * angular-directive-boilerplate
  * 
- * Version: 0.0.8 - 2016-06-16T09:14:54.928Z
+ * Version: 0.0.8 - 2016-06-16T11:26:30.956Z
  * License: MIT
  */
 
@@ -104,10 +104,20 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
     hammer.on('panmove', function(ev) { onPanMove(ev); });
     hammer.on('panend', function(ev) { onPanEnd(ev); });
 
+    // el.on('click', '.btn-remove', function(ev){
+
+    // });
+
     /**
      * synchronizes layer information
      */ 
     var syncLayers = function(newLayers, oldLayers) {
+
+      //angular.element(el[0].querySelector('.btn-remove')).remove();
+
+      el[0].querySelectorAll('.btn-remove').forEach(function(e) {
+        e.parentNode.removeChild(e);
+      });
 
       angular.forEach(newLayers, function(newLayer, index) {
         if(angular.isDefined(oldLayers) && index < oldLayers.length){
@@ -140,19 +150,29 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
       var layer = Object.assign({}, newLayer, defaultLayer);
 
       layer.element = angular.element('<canvas></canvas>');
-      
-      if(layer.type === 'text'){
-        layer.element.addClass('text');
-      }
+
+      var offsetX = (layer.offset.x * options.cellSize);
+      var offsetY = (layer.offset.y * options.cellSize);
 
       layer.element[0].width = options.imageWidth * options.cellSize;
       layer.element[0].height = options.imageHeight * options.cellSize;
-      layer.element[0].style.transform = 'translate(' + 
-                                            (layer.offset.x * options.cellSize) + 'px,' +
-                                            (layer.offset.y * options.cellSize) + 'px)';
+      layer.element[0].style.transform = 'translate(' + offsetX + 'px,' + offsetY + 'px)';
+
+      if(layer.type === 'text'){
+        layer.element.addClass('text');
+        layer.btnRemove = angular.element('<button class="btn-remove"><span class="close"></span></button>');
+        layer.btnRemove[0].style.transform = 'translate(' + (offsetX - 16) + 'px,' + (offsetY - 16) + 'px)';
+
+        el.append(layer.btnRemove);
+        layer.btnRemove.on('click', function(){
+          removeLayer(layer);
+          layer.btnRemove.remove();
+        });
+      }
 
       if(layer.active){
         layer.element.addClass('active');
+        if(layer.btnRemove) layer.btnRemove.addClass('active');
       }
 
       if(angular.isDefined(index)){ 
@@ -181,6 +201,29 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
         redrawLayer(layer);
 
       }      
+    };
+
+    /**
+     * Remove the specified layer
+     */
+    var removeLayer = function(delLayer){
+      var deleteIndex = -1;
+      angular.forEach(layers, function(layer, i) {
+        if(layer === delLayer){
+          deleteIndex = i;
+        }
+      });
+
+      if(deleteIndex !== -1){
+        layers[deleteIndex].element.remove();
+        layers.splice(deleteIndex, 1);
+        scope.layers.splice(deleteIndex, 1);
+      }
+
+      $log.info(scope.layers);
+      $timeout(function() {
+        scope.$digest();
+      });
     };
 
     /**
@@ -257,13 +300,13 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
         if(i === index) {
           layer.active = true;
           layer.element.addClass('active');
-
+          if(layer.btnRemove) layer.btnRemove.addClass('active');
           if(i < scope.layers.length) scope.layers[i].active = true;
         }
         else {
           layer.active = false;
           layer.element.removeClass('active');
-
+          if(layer.btnRemove) layer.btnRemove.addClass('active');
           if(i < scope.layers.length) scope.layers[i].active = false;
         }
       });
@@ -350,9 +393,11 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
         activeLayer.offset.x = Math.floor(newRawPosX / options.cellSize);
         activeLayer.offset.y = Math.floor(newRawPosY / options.cellSize);
         
-        activeLayer.element[0].style.transform = 'translate(' + 
-                                                  (activeLayer.offset.x * options.cellSize) + 'px,' +
-                                                  (activeLayer.offset.y * options.cellSize) + 'px)';
+        var absPosX = (activeLayer.offset.x * options.cellSize);
+        var absPosY = (activeLayer.offset.y * options.cellSize);
+
+        activeLayer.element[0].style.transform = 'translate(' + absPosX + 'px,' + absPosY + 'px)';
+        activeLayer.btnRemove[0].style.transform = 'translate(' + (absPosX - 16) + 'px,' + (absPosY - 16) + 'px)';
       } else {
         onPaint(ev);
       }
