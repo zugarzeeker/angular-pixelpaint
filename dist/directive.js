@@ -1,7 +1,7 @@
 /*!
  * angular-directive-boilerplate
  * 
- * Version: 0.0.8 - 2016-06-16T05:54:39.559Z
+ * Version: 0.0.8 - 2016-06-16T06:02:51.936Z
  * License: MIT
  */
 
@@ -16,7 +16,7 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
     restrict: 'E',
     scope: {
       'layers': '=',
-      'paintOptions': '=',
+      'options': '=',
       'shouldGenerateOutputImage': '=',
       'outputImage': '=',
       'revision': '='
@@ -31,7 +31,7 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
     var defaultCanvas = $document[0].createElement('canvas');
     var defaultContext = defaultCanvas.getContext('2d');
     el.addClass('pixelpaint');
-    var layersContainer = el.find('.layers-container');
+    var layersContainer = angular.element(el[0].querySelector('.layers-container'));
 
     /** 
      * Instance Variables
@@ -52,8 +52,8 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
         panStartLayerOffset = {x:0, y:0},
         revisions = [];
 
-    optionsWatcher = scope.$watch('paintOptions', function(newValue, oldValue) {
-      options = Object.assign(options, scope.paintOptions);
+    optionsWatcher = scope.$watch('options', function(newValue, oldValue) {
+      options = Object.assign(options, scope.options);
 
       // If cell size did changed
       if(newValue.cellSize !== oldValue.cellSize){

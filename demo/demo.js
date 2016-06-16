@@ -1,6 +1,6 @@
 var app = angular.module('demo', ['ngSanitize', 'angularPixelPaint']);
 
-app.controller('DemoController', ['$scope', '$log', function($scope, $log) {
+app.controller('DemoController', ['$scope', '$log', '$timeout', '$document', function($scope, $log, $timeout, $document) {
 
   $scope.shouldGenerateOutputImage = false;
   $scope.paintOptions = {
@@ -35,5 +35,26 @@ app.controller('DemoController', ['$scope', '$log', function($scope, $log) {
       "active": true,
       "fontSize": "20px"
   }];
+
+  $scope.generateOutputImage = function(){
+    $scope.shouldGenerateOutputImage = true;
+    $timeout(() => {
+      $scope.outputImageUrl = imageDataToURL($scope.outputImage, $document);
+    });
+  };
+
+  var imageDataToURL = function(imgData, $document){
+    var c = imageDataToCanvas(imgData, $document);
+    return c.toDataURL("image/png");
+  };
+
+  var imageDataToCanvas = function(imgData, $document){
+    var outCanvas = $document[0].createElement('canvas');
+    outCanvas.width = imgData.width;
+    outCanvas.height = imgData.height;
+    var outCtx = outCanvas.getContext('2d');
+    outCtx.putImageData(imgData, 0, 0);
+    return outCanvas;
+  };
 
 }]);
