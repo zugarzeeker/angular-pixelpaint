@@ -1,11 +1,14 @@
 {
-  "name": "angular-directive-template",
-  "version": "0.0.8",
+  "name": "angular-pixelpaint",
+  "version": "0.0.1",
   "authors": [
-    "Mohsen Azimi <mazimi@apigee.com>"
+    "Soravis Prakkamakul <asunnotthesun@gmail.com>"
   ],
   "description": "Angular Publishable Directive Template",
-  "main": "dist/directive.js, dist/directive.js",
+  "main": [
+    "dist/directive.js",
+    "dist/directive.css"
+  ],
   "license": "MIT",
   "private": false,
   "ignore": [
