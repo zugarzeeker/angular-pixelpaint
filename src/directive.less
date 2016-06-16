@@ -1,0 +1,20 @@
+.pixelpaint {
+  background-color: #cccccc;
+  position:relative;
+  border: 1px solid gray;
+  display: block;
+  overflow: hidden;
+  cursor: crosshair;
+
+  canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    &.text {
+      &.active {
+        border: 1px solid blue;
+      }
+    }
+  }
+}

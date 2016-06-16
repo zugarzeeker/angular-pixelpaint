@@ -1,0 +1,61 @@
+<!doctype html>
+<html ng-app="demo">
+  <head>
+    <meta charset="utf-8">
+    <title>AngularJS directive demo</title>
+
+    <!-- TODO: Include Angular from Bower components -->
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular-sanitize.js"></script>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.css">
+
+    <link rel="stylesheet" href="../dist/directive.css">
+    <link rel="stylesheet" href="demo.css">
+  </head>
+  <body>
+    <div class="container" ng-controller="DemoController">
+      <h1 class="text-muted">Demo</h1>
+
+      <div class="usage row">
+        <h4>Simple usage</h4>
+        <p>This is a simple usage of the directive</p>
+        <pre>&lt;pixel-paint&gt;&lt;/pixel-paint&gt;</pre>
+        <h4>Results</h4>
+
+        <pixel-paint layers="paintLayers" 
+                    options="paintOptions"
+                    should-generate-output-image="shouldGenerateOutputImage"
+                    output-image="outputImage">
+        </pixel-paint>
+
+        <h2>Layers</h2>
+        <div ng-repeat="layer in paintLayers">
+          <div ng-show="layer.type === 'text'">
+            <input type="checkbox" ng-model="layer.active"/> Layer {{$index}}: Text Layer<input type="text" ng-model="layer.text" />
+          </div>
+          <div ng-show="layer.type === 'image'">
+            <input type="checkbox" ng-model="layer.active"/>  Layer {{$index}}: Image Layer
+          </div>
+        </div>
+
+        <h2>Options</h2>
+        CellSize <input type="text" ng-model="paintOptions.cellSize"/>px<br />
+        Width <input type="text" ng-model="paintOptions.imageWidth"/><br />
+        Height <input type="text" ng-model="paintOptions.imageHeight" />
+
+        <br/><br/>
+        <div>
+          <button ng-click="generateOutputImage()">Generate Output Image</button><br/>
+          <img ng-src="{{outputImageUrl}}" />
+        </div>
+
+      </div>
+
+      
+
+    </div>
+    <script src="../bower_components/hammerjs/hammer.js"></script>
+    <script src="../dist/directive.js"></script>
+    <script src="demo.js"></script>
+  </body>
+</html>
