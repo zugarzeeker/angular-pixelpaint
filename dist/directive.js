@@ -1,7 +1,7 @@
 /*!
  * angular-directive-boilerplate
  * 
- * Version: 0.0.8 - 2016-06-16T09:14:03.812Z
+ * Version: 0.0.8 - 2016-06-16T09:14:54.928Z
  * License: MIT
  */
 
@@ -86,7 +86,6 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
 
     outputImageFlagWatcher = scope.$watch('shouldGenerateOutputImage', function(newValue) {
       if(newValue){
-        $log.info('shouldGenerateOutputImage');
         renderLayers();
         $timeout(function() {
           scope.shouldGenerateOutputImage = false;
@@ -172,7 +171,6 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
       if(layer.image){
         var img = new Image();
         img.onload = function() {
-          $log.info('image onload');
           var ctx = layer.dataCanvas.getContext('2d');
           ctx.drawImage(img, 0, 0);
           redrawLayer(layer);
