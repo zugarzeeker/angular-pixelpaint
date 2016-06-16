@@ -1,7 +1,7 @@
 /*!
  * angular-directive-boilerplate
  * 
- * Version: 0.0.8 - 2016-06-16T11:26:30.956Z
+ * Version: 0.0.8 - 2016-06-16T12:01:24.890Z
  * License: MIT
  */
 
@@ -50,8 +50,8 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
           largeGridEvery: 10,
           gridLineWidth: 1,
           gridSubDivisionLineWidth: 0.5,
-          imageWidth: 54,
-          imageHeight: 36,
+          imageWidth: 10,
+          imageHeight: 10,
           showGrid: true,
           brushColor: [0,0,0],
           paintEnabled: true
@@ -601,6 +601,7 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
     });
 
     // Init code
+    options = Object.assign(options, scope.options);
     syncLayers(scope.layers, []);
   }
 
