@@ -3,27 +3,30 @@
 Pixel paint directive for angular with multilayer, text rendering support.
 Requires Hammerjs to be installed.
 
-## Features
-- Multilayer
+#### Features
+- Mouse/Touch support through Hammerks
+- Multilayers
 - Brush Color
-- Directive
+- Text layers
 
 #### Using the directive
 ```shell
 npm install pixel-paint
 ```
+or
 ```shell
 bower install hammerjs
 bower install pixel-paint
 ```
 
 #### Developing the directive
+coming soon
 
-## Roadmap
+#### Roadmap
 - Brush Styles
 - Undo/Redo
 
-coming soon
+
 
 ### License
 MIT
