@@ -1,7 +1,15 @@
 /*!
  * angular-directive-boilerplate
  * 
- * Version: 0.0.8 - 2016-06-16T08:59:24.798Z
+ * Version: 0.0.8 - 2016-06-16T09:14:03.812Z
+ * License: MIT
+ */
+
+
+/*!
+ * angular-directive-boilerplate
+ * 
+ * Version: 0.0.8 - 2016-06-16T07:54:28.642Z
  * License: MIT
  */
 
@@ -148,8 +156,6 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
         layer.element.addClass('active');
       }
 
-      layer.imageData = defaultContext.createImageData(options.imageWidth, options.imageHeight); 
-      
       if(angular.isDefined(index)){ 
         layers[index] = layer;
         layersContainer.find('canvas').eq(index).replaceWith(layer.element);
@@ -158,7 +164,25 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
         layers.push(layer);
         layersContainer.append(layer.element);
       }
-      redrawLayer(layer);
+
+      layer.dataCanvas = $document[0].createElement('canvas');
+      layer.dataCanvas.width = options.imageWidth;
+      layer.dataCanvas.height = options.imageHeight;
+
+      if(layer.image){
+        var img = new Image();
+        img.onload = function() {
+          $log.info('image onload');
+          var ctx = layer.dataCanvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          redrawLayer(layer);
+        };
+
+        img.src = layer.image;
+      }else {
+        redrawLayer(layer);
+
+      }      
     };
 
     /**
@@ -200,6 +224,19 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
         imageData.data[ptr + 1] = g;
         imageData.data[ptr + 2] = b;
         imageData.data[ptr + 3] = a;
+    };
+
+    /**
+     * set color of a pixel in a canvas
+     */
+    var setCanvasPixel = function(canvas, x, y, r, g, b, a) {
+        var ctx = canvas.getContext('2d'),
+            pixel = defaultContext.createImageData(1, 1);
+        pixel.data[0] = r;
+        pixel.data[1] = g;
+        pixel.data[2] = b;
+        pixel.data[3] = a;
+        ctx.putImageData(pixel, x, y);
     };
 
     /**
@@ -251,7 +288,7 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
           var cellY = Math.floor(py / options.cellSize);
 
           if(options.paintEnabled /* && cellX < this.image.width && cellY <= this.image.height */){
-              setImagePixel(activeLayer.imageData, cellX, cellY, 
+              setCanvasPixel(activeLayer.dataCanvas, cellX, cellY, 
                   options.brushColor[0],
                   options.brushColor[1],
                   options.brushColor[2],255);
@@ -324,7 +361,15 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
     };
 
     var onPanEnd = function() {
-      //addRevision();
+      angular.forEach(layers, function(layer, index) {
+        if(layer.type === 'image' && index < scope.layers.length){
+          scope.layers[index].image = layer.dataCanvas.toDataURL('image/png');
+        }
+      });
+
+      $timeout(function() {
+        scope.$digest();
+      });
     };
 
     /**
@@ -332,12 +377,6 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
      */
     var redrawLayer = function(layer) {
       if(layer.type === 'image'){
-        if(layer.image){
-          loadImageData(layer.image).then(function(imageData) {
-            layer.imageData = imageData;
-            redrawImageLayer(layer);
-          });
-        }
         redrawImageLayer(layer);
       }else if(layer.type === 'text'){
         redrawTextLayer(layer);
@@ -379,17 +418,19 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
       layer.element[0].width = size.width * options.cellSize;
       layer.element[0].height = parseInt(fontSize) * options.cellSize;
 
-      layer.imageData = ctx.getImageData(0, 0, options.imageWidth, options.imageHeight);
+      var imageData = ctx.getImageData(0, 0, options.imageWidth, options.imageHeight);
 
       // Fixing alpha
       var ptr;
-      for(var i=0; i< layer.imageData.height; i++){
-        for(var j=0; j< layer.imageData.width; j++){
-            ptr = ((i* layer.imageData.width) + j) * 4;
-            layer.imageData.data[ptr+3] = layer.imageData.data[ptr+3] > 50 ? 255 : 0;
+      for(var i=0; i< imageData.height; i++){
+        for(var j=0; j< imageData.width; j++){
+            ptr = ((i* imageData.width) + j) * 4;
+            imageData.data[ptr+3] = imageData.data[ptr+3] > 50 ? 255 : 0;
         }
       }
 
+      var layerCtx = layer.dataCanvas.getContext('2d');
+      layerCtx.putImageData(imageData, 0, 0);
       redrawImageLayer(layer);
 
     };
@@ -400,16 +441,18 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
     var redrawImageLayer = function(layer) {
       //var imgData = layer.imgData;
       var ctx = layer.element[0].getContext('2d'),
-          ptr, r, g, b, a, alpha, gridSpaceX, gridSpaceY;
-      
+          ptr, r, g, b, a, alpha, gridSpaceX, gridSpaceY,
+          layerCtx = layer.dataCanvas.getContext('2d'),
+          imageData = layerCtx.getImageData(0, 0, options.imageWidth, options.imageHeight);
+
       ctx.clearRect(0, 0, layer.element[0].width, layer.element[0].height);
-      for(var i=0; i< layer.imageData.height; i++){
-          for(var j=0; j< layer.imageData.width; j++){
-              ptr = ((i* layer.imageData.width) + j) * 4;
-              r = layer.imageData.data[ptr];
-              g = layer.imageData.data[ptr+1];
-              b = layer.imageData.data[ptr+2];
-              alpha = layer.imageData.data[ptr+3];
+      for(var i=0; i< imageData.height; i++){
+          for(var j=0; j< imageData.width; j++){
+              ptr = ((i* imageData.width) + j) * 4;
+              r = imageData.data[ptr];
+              g = imageData.data[ptr+1];
+              b = imageData.data[ptr+2];
+              alpha = imageData.data[ptr+3];
               
               //a = (alpha > 50) ? 1 : 0;
               a = alpha / 255;
@@ -477,7 +520,7 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
       var ctx = canvas.getContext('2d');
 
       angular.forEach(layers, function(layer) {
-        ctx.drawImage(imageDataToCanvas(layer.imageData), layer.offset.x, layer.offset.y);
+        ctx.drawImage(layer.dataCanvas, layer.offset.x, layer.offset.y);
       });
 
       scope.outputImage = ctx.getImageData(0, 0, options.imageWidth, options.imageHeight);
