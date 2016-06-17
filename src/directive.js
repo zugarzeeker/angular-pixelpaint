@@ -19,14 +19,15 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
       'options': '=',
       'shouldGenerateOutputImage': '=',
       'outputImage': '=',
-      'revision': '='
+      'revision': '=',
+      'selectedTool': '='
     },
     template: '<div class="layers-container"></div>',
     link: linkFunc
   };
 
   function linkFunc(scope, el) {
-    var optionsWatcher, layersWatcher, outputImageFlagWatcher, revisionWatcher;
+    var optionsWatcher, layersWatcher, outputImageFlagWatcher, revisionWatcher, toolWatcher;
 
     var defaultCanvas = $document[0].createElement('canvas');
     var defaultContext = defaultCanvas.getContext('2d');
@@ -48,6 +49,7 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
           brushColor: [0,0,0],
           paintEnabled: true
         },
+        selectedTool = 'move',
         panStartPos = {x:0, y: 0},
         panStartLayerOffset = {x:0, y:0},
         revisions = [];
@@ -83,6 +85,16 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
           scope.shouldGenerateOutputImage = false;
         });
       }
+    });
+
+    toolWatcher = scope.$watch('selectedTool', function(newValue, oldValue) {
+      // syncLayers(newValue, oldValue);
+      // console.log(newValue);
+      $log.info("oldValue = " + oldValue);
+      $log.info("newValue = " + newValue);
+      selectedTool = newValue;
+      // console.log('x');
+      // $log.info(oldValue);
     });
 
     revisionWatcher = scope.$watch('revision', function(newValue) {
@@ -355,21 +367,25 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
 
         setActiveLayer(selectedIndex);
       }
-      
     };
 
     /**
      * handles pan start from HammerJS
      */
     var onPanStart = function(ev) {
-      var activeLayer = getActiveLayer();
-      if(activeLayer.type === 'text'){
-        panStartPos.x = ev.pointers[0].clientX;
-        panStartPos.y = ev.pointers[0].clientY;
-        panStartLayerOffset.x = activeLayer.offset.x;
-        panStartLayerOffset.y = activeLayer.offset.y;
-      } else {
-        onPaint(ev);
+      if (selectedTool == 'move') {
+        $log.info('onPanStart [Move]');
+      }
+      else {
+        var activeLayer = getActiveLayer();
+        if(activeLayer.type === 'text'){
+          panStartPos.x = ev.pointers[0].clientX;
+          panStartPos.y = ev.pointers[0].clientY;
+          panStartLayerOffset.x = activeLayer.offset.x;
+          panStartLayerOffset.y = activeLayer.offset.y;
+        } else {
+          onPaint(ev);
+        }  
       }
     };
 
@@ -377,34 +393,44 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
      * handles pan event from HammerJS
      */
     var onPanMove = function(ev) {
-      var activeLayer = getActiveLayer();
-      if(activeLayer.type === 'text'){
-        var newRawPosX = (panStartLayerOffset.x * options.cellSize) + (ev.pointers[0].clientX - panStartPos.x);
-        var newRawPosY = (panStartLayerOffset.y * options.cellSize) + (ev.pointers[0].clientY - panStartPos.y);
+      if (selectedTool == 'move') {
+        $log.info('onPanMove [Move]');
+      }
+      else {
+        var activeLayer = getActiveLayer();
+        if(activeLayer.type === 'text'){
+          var newRawPosX = (panStartLayerOffset.x * options.cellSize) + (ev.pointers[0].clientX - panStartPos.x);
+          var newRawPosY = (panStartLayerOffset.y * options.cellSize) + (ev.pointers[0].clientY - panStartPos.y);
 
-        activeLayer.offset.x = Math.floor(newRawPosX / options.cellSize);
-        activeLayer.offset.y = Math.floor(newRawPosY / options.cellSize);
-        
-        var absPosX = (activeLayer.offset.x * options.cellSize);
-        var absPosY = (activeLayer.offset.y * options.cellSize);
+          activeLayer.offset.x = Math.floor(newRawPosX / options.cellSize);
+          activeLayer.offset.y = Math.floor(newRawPosY / options.cellSize);
+          
+          var absPosX = (activeLayer.offset.x * options.cellSize);
+          var absPosY = (activeLayer.offset.y * options.cellSize);
 
-        activeLayer.element[0].style.transform = 'translate(' + absPosX + 'px,' + absPosY + 'px)';
-        activeLayer.btnRemove[0].style.transform = 'translate(' + (absPosX - 16) + 'px,' + (absPosY - 16) + 'px)';
-      } else {
-        onPaint(ev);
+          activeLayer.element[0].style.transform = 'translate(' + absPosX + 'px,' + absPosY + 'px)';
+          activeLayer.btnRemove[0].style.transform = 'translate(' + (absPosX - 16) + 'px,' + (absPosY - 16) + 'px)';
+        } else {
+          onPaint(ev);
+        }  
       }
     };
 
     var onPanEnd = function() {
-      angular.forEach(layers, function(layer, index) {
-        if(layer.type === 'image' && index < scope.layers.length){
-          scope.layers[index].image = layer.dataCanvas.toDataURL('image/png');
-        }
-      });
+      if (selectedTool == 'move') {
+        $log.info('onPanEnd [Move]');
+      }
+      else {
+        angular.forEach(layers, function(layer, index) {
+          if(layer.type === 'image' && index < scope.layers.length){
+            scope.layers[index].image = layer.dataCanvas.toDataURL('image/png');
+          }
+        });
 
-      $timeout(function() {
-        scope.$digest();
-      });
+        $timeout(function() {
+          scope.$digest();
+        });  
+      }
     };
 
     /**
@@ -590,6 +616,7 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
       layersWatcher();
       outputImageFlagWatcher();
       revisionWatcher();
+      toolWatcher();
     });
 
     // Init code
