@@ -37,6 +37,14 @@ app.controller('DemoController', ['$scope', '$log', '$timeout', '$document', fun
       "fontSize": "20px"
   }];
 
+  $scope.zoomIn = function() {
+    $scope.paintOptions.cellSize++;
+  }
+
+  $scope.zoomOut = function() {
+    $scope.paintOptions.cellSize--;
+  }
+
   $scope.generateOutputImage = function(){
     $scope.shouldGenerateOutputImage = true;
     $timeout(() => {

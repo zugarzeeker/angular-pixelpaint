@@ -35,6 +35,10 @@
           <option value="paint or text">Paint or text</option>
         </select>
 
+        <h2>Zoom</h2>
+        <button ng-click="zoomIn()">Zoom In</button>
+        <button ng-click="zoomOut()">Zoom Out</button>
+
         <h2>Layers</h2>
         <div ng-repeat="layer in paintLayers">
           <div ng-show="layer.type === 'text'">

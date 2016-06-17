@@ -1,7 +1,7 @@
 /*!
  * angular-directive-boilerplate
  * 
- * Version: 0.0.8 - 2016-06-17T08:50:19.332Z
+ * Version: 0.0.8 - 2016-06-17T08:58:01.494Z
  * License: MIT
  */
 
@@ -63,19 +63,21 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
         revisions = [];
 
     optionsWatcher = scope.$watch('options', function(newValue, oldValue) {
-      options = Object.assign(options, scope.options);
+      if (newValue.cellSize > 0) {
 
-      // If cell size did changed
-      if(newValue.cellSize !== oldValue.cellSize){
-        angular.forEach(layers, function(layer) {
-          layer.element[0].width = options.imageWidth * options.cellSize;
-          layer.element[0].height = options.imageHeight * options.cellSize;
-          layer.element[0].style.transform = 'translate(' + 
-                                              (layer.offset.x * options.cellSize) + 'px,' +
-                                              (layer.offset.y * options.cellSize) + 'px)';
-          redrawLayer(layer);
-        });
+        options = Object.assign(options, scope.options);
 
+        // If cell size did changed
+        if(newValue.cellSize !== oldValue.cellSize){
+          angular.forEach(layers, function(layer) {
+            layer.element[0].width = options.imageWidth * options.cellSize;
+            layer.element[0].height = options.imageHeight * options.cellSize;
+            layer.element[0].style.transform = 'translate(' + 
+                                                (layer.offset.x * options.cellSize) + 'px,' +
+                                                (layer.offset.y * options.cellSize) + 'px)';
+            redrawLayer(layer);
+          });
+        }
       }
 
       el.css('width', options.imageWidth * options.cellSize + 'px');
