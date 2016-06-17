@@ -1,7 +1,7 @@
 /*!
  * angular-directive-boilerplate
  * 
- * Version: 0.0.8 - 2016-06-17T09:21:27.419Z
+ * Version: 0.0.8 - 2016-06-17T09:51:34.871Z
  * License: MIT
  */
 
@@ -70,6 +70,7 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
         selectedTool = 'move',
         panStartPos = {x:0, y: 0},
         panStartLayerOffset = {x:0, y:0},
+        panMoveAllOffset = {x:0, y:0},
         revisions = [];
 
     optionsWatcher = scope.$watch('options', function(newValue, oldValue) {
@@ -373,7 +374,8 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
      */
     var onTap = function(ev) {
       if (selectedTool == 'move') {
-        $log.info('onTap [Move]');
+        panStartPos.x = ev.pointers[0].clientX;
+        panStartPos.y = ev.pointers[0].clientY;
       }
       else {
         var activeLayer = getActiveLayer();
@@ -401,7 +403,12 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
      */
     var onPanStart = function(ev) {
       if (selectedTool == 'move') {
-        $log.info('onPanStart [Move]');
+          panStartPos.x = ev.pointers[0].clientX;
+          panStartPos.y = ev.pointers[0].clientY;
+          panStartLayerOffset.x = panMoveAllOffset.x;
+          panStartLayerOffset.y = panMoveAllOffset.y;
+          // panStartLayerOffset.x = activeLayer.offset.x;
+          // panStartLayerOffset.y = activeLayer.offset.y;
       }
       else {
         var activeLayer = getActiveLayer();
@@ -416,12 +423,25 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
       }
     };
 
+    var absPos = function(value) {
+      return Math.floor(value / options.cellSize) * options.cellSize;
+    };
+
     /**
      * handles pan event from HammerJS
      */
     var onPanMove = function(ev) {
       if (selectedTool == 'move') {
         $log.info('onPanMove [Move]');
+        // $log.info(ev.pointers[0].clientX - panStartPos.x);
+        var delta = {};
+        delta.x = (panStartLayerOffset.x * options.cellSize) + (ev.pointers[0].clientX - panStartPos.x);
+        delta.y = (panStartLayerOffset.y * options.cellSize) + (ev.pointers[0].clientY - panStartPos.y);
+
+        panMoveAllOffset.x = Math.floor(delta.x / options.cellSize);
+        panMoveAllOffset.y = Math.floor(delta.y / options.cellSize);
+
+        el[0].style.transform = 'translate(' + absPos(delta.x) + 'px,' + absPos(delta.y) + 'px)';
       }
       else {
         var activeLayer = getActiveLayer();
