@@ -433,7 +433,8 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
         panMoveAllOffset.x = Math.floor(delta.x / options.cellSize);
         panMoveAllOffset.y = Math.floor(delta.y / options.cellSize);
 
-        el[0].style.transform = 'translate(' + absPos(delta.x) + 'px,' + absPos(delta.y) + 'px)';
+        // el[0].style.transform = 'translate(' + absPos(delta.x) + 'px,' + absPos(delta.y) + 'px)';
+        el[0].querySelector('.layers-container').style.transform = 'translate(' + absPos(delta.x) + 'px,' + absPos(delta.y) + 'px)';
       }
       else {
         var activeLayer = getActiveLayer();

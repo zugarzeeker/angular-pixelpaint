@@ -1,7 +1,7 @@
 /*!
  * angular-directive-boilerplate
  * 
- * Version: 0.0.8 - 2016-06-17T09:51:34.871Z
+ * Version: 0.0.8 - 2016-06-17T09:54:19.345Z
  * License: MIT
  */
 
@@ -441,7 +441,8 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
         panMoveAllOffset.x = Math.floor(delta.x / options.cellSize);
         panMoveAllOffset.y = Math.floor(delta.y / options.cellSize);
 
-        el[0].style.transform = 'translate(' + absPos(delta.x) + 'px,' + absPos(delta.y) + 'px)';
+        // el[0].style.transform = 'translate(' + absPos(delta.x) + 'px,' + absPos(delta.y) + 'px)';
+        el[0].querySelector('.layers-container').style.transform = 'translate(' + absPos(delta.x) + 'px,' + absPos(delta.y) + 'px)';
       }
       else {
         var activeLayer = getActiveLayer();
