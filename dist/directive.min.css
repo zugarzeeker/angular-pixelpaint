@@ -1,6 +1,6 @@
 /*!
  * angular-directive-boilerplate
  * 
- * Version: 0.0.8 - 2016-06-17T08:58:01.489Z
+ * Version: 0.0.8 - 2016-06-17T09:01:08.038Z
  * License: MIT
  */.pixelpaint{background-color:#ccc;position:relative;border:1px solid gray;display:block;overflow:hidden;cursor:crosshair}.pixelpaint canvas{position:absolute;left:0;top:0}.pixelpaint canvas.text.active{border:2px solid #00b9be}.pixelpaint .btn-remove{background-color:#00b9be;color:#fff;position:absolute;z-index:1000;display:none;border:none;width:32px;height:32px;border-radius:16px}.pixelpaint .btn-remove.active{display:block}.pixelpaint .btn-remove .close{position:absolute;left:5px;right:5px;top:5px;width:20px;height:20px;opacity:.3}.pixelpaint .btn-remove .close:hover{opacity:1}.pixelpaint .btn-remove .close:after,.pixelpaint .btn-remove .close:before{position:absolute;left:10px;content:' ';height:20px;width:2px;background-color:#fff}.pixelpaint .btn-remove .close:before{transform:rotate(45deg)}.pixelpaint .btn-remove .close:after{transform:rotate(-45deg)}

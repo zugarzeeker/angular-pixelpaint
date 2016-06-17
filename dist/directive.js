@@ -1,7 +1,7 @@
 /*!
  * angular-directive-boilerplate
  * 
- * Version: 0.0.8 - 2016-06-17T08:58:01.494Z
+ * Version: 0.0.8 - 2016-06-17T09:01:08.045Z
  * License: MIT
  */
 
@@ -103,6 +103,9 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
       $log.info("oldValue = " + oldValue);
       $log.info("newValue = " + newValue);
       selectedTool = newValue;
+      if (selectedTool == 'move') {
+        setActiveLayer(null);
+      }
       // console.log('x');
       // $log.info(oldValue);
     });
@@ -359,23 +362,27 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
      * handles tap event from HammerJS
      */
     var onTap = function(ev) {
-      
-      var activeLayer = getActiveLayer();
+      if (selectedTool == 'move') {
+        $log.info('onTap [Move]');
+      }
+      else {
+        var activeLayer = getActiveLayer();
 
-      if(ev.target === activeLayer.element[0]){
-        if(activeLayer.type !== 'text'){
-          onPaint(ev);
-        }
-      }else{
-        // Active elem changed
-        var selectedIndex;
-        angular.forEach(layers, function(layer, index) {
-          if(layer.element[0] === ev.target){
-            selectedIndex = index;
+        if(ev.target === activeLayer.element[0]){
+          if(activeLayer.type !== 'text'){
+            onPaint(ev);
           }
-        });
+        }else{
+          // Active elem changed
+          var selectedIndex;
+          angular.forEach(layers, function(layer, index) {
+            if(layer.element[0] === ev.target){
+              selectedIndex = index;
+            }
+          });
 
-        setActiveLayer(selectedIndex);
+          setActiveLayer(selectedIndex);
+        }
       }
     };
 
