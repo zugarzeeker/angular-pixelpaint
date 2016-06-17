@@ -1,7 +1,7 @@
 /*!
  * angular-directive-boilerplate
  * 
- * Version: 0.0.8 - 2016-06-17T09:01:08.045Z
+ * Version: 0.0.8 - 2016-06-17T09:21:27.419Z
  * License: MIT
  */
 
@@ -34,7 +34,17 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
     link: linkFunc
   };
 
+  function setStyle(scope, el) {
+    el[0].style['overflow'] = 'scroll';
+    // el[0].style['max-width'] = el[0].style.width;
+    // el[0].style['height'] = el[0].style.height;
+    el.css('width', el[0].style.width || '500px');
+    el.css('height', el[0].style.height || '500px');
+  }
+
   function linkFunc(scope, el) {
+    setStyle(scope, el);
+    $window.el = el;
     var optionsWatcher, layersWatcher, outputImageFlagWatcher, revisionWatcher, toolWatcher;
 
     var defaultCanvas = $document[0].createElement('canvas');
@@ -80,8 +90,8 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
         }
       }
 
-      el.css('width', options.imageWidth * options.cellSize + 'px');
-      el.css('height', options.imageHeight * options.cellSize + 'px');
+      // el.css('width', options.imageWidth * options.cellSize + 'px');
+      // el.css('height', options.imageHeight * options.cellSize + 'px');
     }, true);
 
     layersWatcher = scope.$watch('layers', function(newValue, oldValue) {
