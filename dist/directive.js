@@ -1,7 +1,7 @@
 /*!
  * angular-directive-boilerplate
  * 
- * Version: 0.0.9 - 2016-06-20T10:51:35.537Z
+ * Version: 0.0.9 - 2016-06-20T18:05:44.091Z
  * License: MIT
  */
 
@@ -81,8 +81,8 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
         // If cell size did changed
         if(newValue.cellSize !== oldValue.cellSize){
           angular.forEach(layers, function(layer) {
-            layer.element[0].width = options.imageWidth * options.cellSize;
-            layer.element[0].height = options.imageHeight * options.cellSize;
+            layer.element[0].width = (layer.element[0].width / oldValue.cellSize) * options.cellSize;
+            layer.element[0].height = (layer.element[0].height / oldValue.cellSize) * options.cellSize;
             layer.element[0].style.transform = 'translate(' + 
                                                 (layer.offset.x * options.cellSize) + 'px,' +
                                                 (layer.offset.y * options.cellSize) + 'px)';
@@ -213,8 +213,10 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
       }
 
       layer.dataCanvas = $document[0].createElement('canvas');
-      layer.dataCanvas.width = options.imageWidth;
-      layer.dataCanvas.height = options.imageHeight;
+      // layer.dataCanvas.width = options.imageWidth;
+      // layer.dataCanvas.height = options.imageHeight;
+      layer.dataCanvas.width = layer.element[0].width;
+      layer.dataCanvas.height = layer.element[0].height;
 
       if(layer.image){
         var img = new Image();
@@ -492,42 +494,56 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
       }
     };
 
+    var fillText = function(text, layer, ctx, fontSize) {
+      ctx.font = fontSize + ' ' + (layer.fontFamily || "Arial"); 
+      ctx.textBaseline = 'top';
+      ctx.fillStyle = layer.color;
+      ctx.fillText(text, 0, 0);
+    };
+
     /**
      * Redraw a text layer
      */
     var redrawTextLayer = function(layer) {
       var $canvas = angular.element('<canvas></canvas>');
       var canvas = $canvas[0];
-      canvas.width = options.imageWidth;
-      canvas.height = options.imageHeight;
+      canvas.width = 10000;
+      canvas.height = 10000;
       var ctx = canvas.getContext('2d');
 
-      if ($window.devicePixelRatio) {
-        var hidefCanvasWidth = $canvas.attr('width');
-        var hidefCanvasHeight = $canvas.attr('height');
-        var hidefCanvasCssWidth = hidefCanvasWidth;
-        var hidefCanvasCssHeight = hidefCanvasHeight;
-    
-        $canvas.attr('width', hidefCanvasWidth * $window.devicePixelRatio);
-        $canvas.attr('height', hidefCanvasHeight * $window.devicePixelRatio);
-        $canvas.css('width', hidefCanvasCssWidth);
-        $canvas.css('height', hidefCanvasCssHeight);
-        ctx.scale($window.devicePixelRatio, $window.devicePixelRatio);               
-      }
-      
       var fontSize = (layer.fontSize || "10px");
-      ctx.font = fontSize + ' ' + (layer.fontFamily || "Arial"); 
       var text = layer.text || "text";
-      ctx.textBaseline = 'top';
-      ctx.fillStyle = layer.color;
-      ctx.fillText(text, 0, 0);
+      fillText(text, layer, ctx, fontSize);
+      
+      var size = ctx.measureText(text);
+      canvas.width = size.width;
+      canvas.height = parseInt(fontSize) * 1.5;
+      ctx = canvas.getContext('2d');
+      
+      // if ($window.devicePixelRatio) {
+      //   var hidefCanvasWidth = $canvas.attr('width');
+      //   var hidefCanvasHeight = $canvas.attr('height');
+      //   var hidefCanvasCssWidth = hidefCanvasWidth;
+      //   var hidefCanvasCssHeight = hidefCanvasHeight;
+    
+      //   $canvas.attr('width', hidefCanvasWidth * $window.devicePixelRatio);
+      //   $canvas.attr('height', hidefCanvasHeight * $window.devicePixelRatio);
+      //   $canvas.css('width', hidefCanvasCssWidth);
+      //   $canvas.css('height', hidefCanvasCssHeight);
+      //   ctx.scale($window.devicePixelRatio, $window.devicePixelRatio);               
+      // }
+      
+      fillText(text, layer, ctx, fontSize);
 
       // Settings the correct bounds
-      var size = ctx.measureText(text);
       layer.element[0].width = size.width * options.cellSize;
-      layer.element[0].height = parseInt(fontSize) * options.cellSize;
+      layer.element[0].height = parseInt(fontSize) * 1.5 * options.cellSize;
+      $log.info(parseInt(fontSize));
 
-      var imageData = ctx.getImageData(0, 0, options.imageWidth, options.imageHeight);
+      var imageData = ctx.getImageData(0, 0, size.width, parseInt(fontSize) * 1.5);
+
+
+      
 
       // Fixing alpha
       var ptr;
@@ -552,7 +568,7 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
       var ctx = layer.element[0].getContext('2d'),
           ptr, r, g, b, a, alpha, gridSpaceX, gridSpaceY,
           layerCtx = layer.dataCanvas.getContext('2d'),
-          imageData = layerCtx.getImageData(0, 0, options.imageWidth, options.imageHeight);
+          imageData = layerCtx.getImageData(0, 0, layer.element[0].width / options.cellSize, layer.element[0].height / options.cellSize);
 
       ctx.clearRect(0, 0, layer.element[0].width, layer.element[0].height);
       for(var i=0; i< imageData.height; i++){
