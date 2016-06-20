@@ -63,7 +63,9 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
         panStartPos = {x:0, y: 0},
         panStartLayerOffset = {x:0, y:0},
         panMoveAllOffset = {x:0, y:0},
-        revisions = [];
+        revisions = [],
+        debug = false,
+        fix = {};
 
     optionsWatcher = scope.$watch('options', function(newValue, oldValue) {
       if (newValue.cellSize > 0) {
@@ -518,6 +520,16 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
       var size = ctx.measureText(text);
       layer.element[0].width = size.width * options.cellSize;
       layer.element[0].height = parseInt(fontSize) * options.cellSize;
+      
+      /* For Use Fix Size */
+      if (!debug) {
+        fix.width = options.imageWidth;
+        fix.height = options.imageHeight;
+      }
+      options.imageWidth = layer.element[0].width;
+      options.imageHeight = layer.element[0].height;
+      debug = true;
+      /* For Use Fix Size */
 
       var imageData = ctx.getImageData(0, 0, options.imageWidth, options.imageHeight);
 
@@ -624,7 +636,12 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
         ctx.drawImage(layer.dataCanvas, layer.offset.x, layer.offset.y);
       });
 
-      scope.outputImage = ctx.getImageData(0, 0, options.imageWidth, options.imageHeight);
+      if (debug) {
+        scope.outputImage = ctx.getImageData(0, 0, fix.width, fix.height);
+      }
+      else {
+        scope.outputImage = ctx.getImageData(0, 0, options.imageWidth, options.imageHeight);  
+      }
 
     };
 
