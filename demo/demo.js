@@ -26,16 +26,20 @@ app.controller('DemoController', ['$scope', '$log', '$timeout', '$document', fun
   },
   {
       "type": "text",
-      "text": "TEXT 2",
+      "text": "ภาษาไทย",
       "color": "#00ff00",
-      "fontFamily": "verdana"
-  },{
+      "fontFamily": "Itim",
+      "fontSize": "20px"
+  }
+  ,
+  {
       "type": "text",
       "text": "ภาพ",
       "color": "#ff0000",
       "active": true,
       "fontSize": "20px"
-  }];
+  }
+  ];
 
   $scope.zoomIn = function() {
     $scope.paintOptions.cellSize++;

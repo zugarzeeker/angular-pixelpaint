@@ -9,6 +9,7 @@
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular-sanitize.js"></script>
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.css">
 
+    <link href="https://fonts.googleapis.com/css?family=Itim|Pridi|Prompt|Sriracha" rel="stylesheet">
     <link rel="stylesheet" href="../dist/directive.css">
     <link rel="stylesheet" href="demo.css">
   </head>
@@ -41,13 +42,32 @@
         <button ng-click="zoomOut()">Zoom Out</button>
 
         <h2>Layers</h2>
+        
+        <h2 style="font-family: 'munroregular';">Layers</h2>
         <div ng-repeat="layer in paintLayers">
           <div ng-show="layer.type === 'text'">
             <input type="checkbox" ng-model="layer.active"/> Layer {{$index}}: Text Layer<input type="text" ng-model="layer.text" />
+            <select name="singleSelect" ng-model="layer.fontFamily">
+              <option value="Prompt">Prompt</option>
+              <option value="Itim">Itim</option>
+              <option value="Sriracha">Sriracha</option>
+              <option value="Pridi">Pridi</option>
+              <option value="Tahoma">Tahoma</option>
+              <option value="Arial">Arial</option>
+            </select>
+            <select name="singleSelect" ng-model="layer.fontSize">
+              <option value="10px">10px</option>
+              <option value="20px">20px</option>
+              <option value="30px">30px</option>
+              <option value="100px">100px</option>
+              <option value="200px">200px</option>
+            </select>
           </div>
           <div ng-show="layer.type === 'image'">
             <input type="checkbox" ng-model="layer.active"/>  Layer {{$index}}: Image Layer
           </div>
+          <br>
+
         </div>
 
         <h2>Options</h2>
