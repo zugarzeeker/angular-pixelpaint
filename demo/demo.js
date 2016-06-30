@@ -37,7 +37,9 @@ app.controller('DemoController', ['$scope', '$log', '$timeout', '$document', fun
       "text": "ภาพ",
       "color": "#ff0000",
       "active": true,
-      "fontSize": "20px"
+      "fontSize": "20px",
+      "offsetX": "20",
+      "offsetY": "5"
   }
   ];
 

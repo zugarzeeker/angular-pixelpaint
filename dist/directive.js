@@ -1,7 +1,7 @@
 /*!
  * angular-directive-boilerplate
  * 
- * Version: 0.0.11 - 2016-06-30T11:51:35.765Z
+ * Version: 0.0.13 - 2016-06-30T12:17:54.934Z
  * License: MIT
  */
 
@@ -223,10 +223,8 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
         var createLayer = function(newLayer, index) {
 
             var defaultLayer = {
-                offset: {
-                    x: 0,
-                    y: 0
-                }
+                offsetX: 0,
+                offsetY: 0
             };
             if (index < layers.length) {
                 if (layers[index].type === 'text') {
@@ -234,12 +232,17 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
                 }
             }
 
-            var layer = Object.assign({}, newLayer, defaultLayer);
+            var layer = Object.assign({}, defaultLayer, newLayer);
 
             layer.element = angular.element('<canvas></canvas>');
 
-            var offsetX = (layer.offset.x * options.cellSize);
-            var offsetY = (layer.offset.y * options.cellSize);
+            var offsetX = (layer.offsetX * options.cellSize);
+            var offsetY = (layer.offsetY * options.cellSize);
+
+            layer.offset = {
+              x: layer.offsetX,
+              y: layer.offsetY
+            };
 
             layer.element[0].width = options.imageWidth * options.cellSize;
             layer.element[0].height = options.imageHeight * options.cellSize;
@@ -535,9 +538,9 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
 
                     activeLayer.offset.x = Math.floor(newRawPosX / options.cellSize);
                     activeLayer.offset.y = Math.floor(newRawPosY / options.cellSize);
-                    
-                    activeLayerRef.offset.x = Math.floor(newRawPosX / options.cellSize);
-                    activeLayerRef.offset.y = Math.floor(newRawPosY / options.cellSize);
+
+                    activeLayerRef.offsetX = Math.floor(newRawPosX / options.cellSize);
+                    activeLayerRef.offsetY = Math.floor(newRawPosY / options.cellSize);
 
                     var absPosX = (activeLayer.offset.x * options.cellSize);
                     var absPosY = (activeLayer.offset.y * options.cellSize);
