@@ -1,7 +1,7 @@
 /*!
  * angular-directive-boilerplate
  * 
- * Version: 0.0.13 - 2016-06-30T12:17:54.934Z
+ * Version: 0.0.13 - 2016-06-30T12:57:02.735Z
  * License: MIT
  */
 
@@ -128,12 +128,19 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
 
                 // If cell size did changed
                 if (newValue.cellSize !== oldValue.cellSize) {
+                    //panMoveAllOffset.x = panMoveAllOffset.x * oldValue.cellSize / options.cellSize;
+                    //panMoveAllOffset.y = panMoveAllOffset.y * oldValue.cellSize / options.cellSize;
                     angular.forEach(layers, function(layer) {
                         layer.element[0].width = (layer.element[0].width / oldValue.cellSize) * options.cellSize;
                         layer.element[0].height = (layer.element[0].height / oldValue.cellSize) * options.cellSize;
                         layer.element[0].style.transform = 'translate(' +
                             (layer.offset.x * options.cellSize) + 'px,' +
                             (layer.offset.y * options.cellSize) + 'px)';
+                        if (layer.type == 'text') {
+                          layer.btnRemove[0].style.transform = 'translate(' +
+                              (layer.offset.x * options.cellSize - 16)  + 'px,' +
+                              (layer.offset.y * options.cellSize - 16) + 'px)';
+                        }
                         redrawLayer(layer);
                     });
                 }
