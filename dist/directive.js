@@ -1,7 +1,7 @@
 /*!
  * angular-directive-boilerplate
  * 
- * Version: 0.0.12 - 2016-06-30T11:32:11.159Z
+ * Version: 0.0.11 - 2016-06-30T11:51:35.765Z
  * License: MIT
  */
 
@@ -380,6 +380,14 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
             return activeLayer;
         };
 
+        var getActiveLayerRef = function() {
+           var activeLayer = scope.layers[0];
+           angular.forEach(scope.layers, function(layer) {
+               if (layer.active)
+                   activeLayer = layer;
+           });
+           return activeLayer;
+        };
         /**
          * set the currently active layer
          */
@@ -520,12 +528,16 @@ angular.module('angularPixelPaint', []).directive('pixelPaint', ['$document', '$
                 }
             } else {
                 var activeLayer = getActiveLayer();
+                var activeLayerRef = getActiveLayerRef();
                 if (activeLayer.type === 'text') {
                     var newRawPosX = (panStartLayerOffset.x * options.cellSize) + (ev.pointers[0].clientX - panStartPos.x);
                     var newRawPosY = (panStartLayerOffset.y * options.cellSize) + (ev.pointers[0].clientY - panStartPos.y);
 
                     activeLayer.offset.x = Math.floor(newRawPosX / options.cellSize);
                     activeLayer.offset.y = Math.floor(newRawPosY / options.cellSize);
+                    
+                    activeLayerRef.offset.x = Math.floor(newRawPosX / options.cellSize);
+                    activeLayerRef.offset.y = Math.floor(newRawPosY / options.cellSize);
 
                     var absPosX = (activeLayer.offset.x * options.cellSize);
                     var absPosY = (activeLayer.offset.y * options.cellSize);
